@@ -42,7 +42,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Deploy your application to a target environment (e.g., staging, production)
-                sh 'echo "Value of ENV Varaible is "$MY_ENV_VAR""'
+                echo "Value of ENV Varaible is "$MY_ENV_VAR""
             }
         }
     }
