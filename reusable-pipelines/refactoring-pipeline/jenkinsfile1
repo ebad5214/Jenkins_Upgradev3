@@ -2,60 +2,51 @@ pipeline {
     agent any
     
     environment {
-      VERSION = '0.1.0'
-      RELEASE_VERSION = 'R.2'
+        VERSION = '0.1.0'
+        RELEASE_VERSION = 'R.2'
+        M2_HOME = '/opt/apache-maven-3.6.3'
+        PATH = "$M2_HOME/bin:$PATH"
     }
 
     stages {
-      stage('Audit tools') {
-        steps {
-          sh '''
-              git version
-              java -version
-              M2_HOME='/opt/apache-maven-3.6.3'
-              PATH="$M2_HOME/bin:$PATH"
-              export PATH
-              mvn -version
-          '''
+        stage('Audit tools') {
+            steps {
+                sh '''
+                    git version
+                    java -version
+                    mvn -version
+                '''
+            }
         }
-      }
 
-      stage('Unit Test') {
-        steps {
-          dir('./java-tomcat-sample') {
-            sh '''
-              echo "Executing Unit Tests..."
-              M2_HOME='/opt/apache-maven-3.6.3'
-              PATH="$M2_HOME/bin:$PATH"
-              export PATH
-              mvn test
-          '''
-          }
+        stage('Unit Test') {
+            steps {
+                dir('./java-tomcat-sample') {
+                    sh '''
+                        echo "Executing Unit Tests..."
+                        mvn test
+                    '''
+                }
+            }
         }
-      }
 
-      stage('Build') {
-        steps {
-          echo "Building version: ${VERSION} with suffix: ${RELEASE_VERSION}"
-          echo 'Mention your Application Build Code here!!!'
-          sh '''
-            M2_HOME='/opt/apache-maven-3.6.3'
-            PATH="$M2_HOME/bin:$PATH"
-            export PATH
-            mvn -f java-tomcat-sample/pom.xml clean package
-        '''
+        stage('Build') {
+            steps {
+                echo "Building version: ${VERSION} with suffix: ${RELEASE_VERSION}"
+                echo 'Mention your Application Build Code here!!!'
+                sh '''
+                    mvn -f java-tomcat-sample/pom.xml clean package
+                '''
+            }
         }
-      }
+    }
 
-      post {
+    post {
         success {
-            // Actions to perform when the pipeline succeeds
             echo 'Pipeline succeeded!'
         }
         failure {
-            // Actions to perform when the pipeline fails
             echo 'Pipeline failed!'
         }
-      }
     }
 }
